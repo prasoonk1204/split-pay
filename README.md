@@ -1,16 +1,41 @@
-# React + Vite
+# Smart Split & Pay dApp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
+A Stellar testnet dApp designed for students and friends to easily connect their wallets, check balances, and split bills using XLM. 
 
-Currently, two official plugins are available:
+By framing transactions around "friend/group vibes" and bill splitting, it bridges the gap between raw crypto transfers and everyday utility.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
+- **Wallet connect**: Easy integration with Freighter extension.
+- **Balance display**: Fetch LIVE testnet XLM balance using the Stellar Horizon API.
+- **Send XLM (Split Payment)**: Invite a friend and send them an exact share of the payment.
+- **Transaction feedback**: Real-time status indicators (Success, Error) and trackable transaction hashes.
 
-## React Compiler
+## Setup
+### Prerequisites
+- Node.js (v18+)
+- [Freighter Wallet Extension](https://www.freighter.app/)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Installation & Execution
+```bash
+# Install dependencies
+npm install
 
-## Expanding the ESLint configuration
+# Start the local development server
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Screenshots
+*(Images to be added before final submission)*
+- Wallet connected display
+- Balance visible via BalanceCard
+- Transaction success feedback
+- Transaction hash link to explorer
+
+## Future Scope (Level 2+)
+- **Split bill system**: Complex arithmetic for splitting exact costs manually.
+- **Group creation**: Allow the creation of shared vaults via Smart Contracts (Soroban).
+- **History tracking**: View past split payments.
+
+---
+> *Tip: Ensure your Freighter wallet is set to **Testnet** and funded via the Stellar laboratory friendly bot before making transactions!*
