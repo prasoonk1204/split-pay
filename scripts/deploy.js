@@ -1,0 +1,1 @@
+// Deployment script for Split Pay smart contract\nconsole.log("Deploying contract...");\n
