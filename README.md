@@ -206,4 +206,212 @@ Complete view with 3D background (wormhole ring, ringed planet, star field) and 
 
 ---
 
-> ⚠️ **Testnet only.** No real value is transferred. Always verify Freighter is set to **Testnet** before use.
+> ⚠️ **Testnet only.** No real value is transferred. Always verify your wallet is set to **Testnet** before use.
+
+---
+
+---
+
+# 🥋 Integration Phase — Level 2 Requirements
+
+> Building on the Core Phase foundation with multi-wallet support, Soroban smart contract integration, and real-time event handling.
+
+<div align="center">
+
+[![Contract](https://img.shields.io/badge/Soroban%20Contract-Native%20Asset%20SAC-7c3aed?style=for-the-badge)](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC)
+[![Wallets](https://img.shields.io/badge/Wallets-Multi--Wallet%20Kit-00d4ff?style=for-the-badge)](#-multi-wallet-integration)
+
+</div>
+
+---
+
+## 🔗 Deployed Contract
+
+**Contract Type:** Stellar Native Asset Contract (SAC) — XLM Token Contract  
+**Contract Address:**
+```
+CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
+```
+**Explorer:** [View on Stellar Expert →](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC)
+
+> This is the canonical Soroban-wrapped XLM token contract deployed natively on Stellar Testnet. It exposes a full Soroban interface (`transfer`, `balance`, events) without requiring local Rust compilation.
+
+---
+
+## 🔑 Multi-Wallet Integration
+
+Uses **`@creit.tech/stellar-wallets-kit` v2** for multi-wallet support. When the user clicks "Connect Wallet", a custom picker modal opens showing all supported wallets with install status:
+
+| Wallet | Type | Status Detection |
+|--------|------|-----------------|
+| **Freighter** | Browser Extension | ✓ Auto-detected |
+| **LOBSTR** | Mobile + Web | ✓ Auto-detected |
+| **Albedo** | Web Signer | ✓ Always available |
+| **xBull** | Browser Extension | ✓ Auto-detected |
+| **Rabet** | Browser Extension | ✓ Auto-detected |
+| **WalletConnect** | QR Code | ✓ Always available |
+
+### Wallet Connect Flow
+```
+User clicks "Connect" 
+  → WalletModal opens (shows installed + installable wallets)
+  → User selects wallet
+  → StellarWalletsKit.setWallet(id) + getAddress()
+  → Public key returned → balance fetched via Horizon
+```
+
+---
+
+## ⚡ Soroban Contract Interaction
+
+The **Contract Panel** component (`src/components/ContractPanel.jsx`) calls the SAC `transfer()` function via the Soroban RPC pipeline:
+
+```
+1. TransactionBuilder.addOperation(contract.call("transfer", from, to, amount))
+2. sorobanServer.simulateTransaction(tx)   ← pre-flight check
+3. SorobanRpc.assembleTransaction(tx, sim) ← inject auth + footprint
+4. StellarWalletsKit.signTransaction(xdr)  ← user signs in wallet
+5. sorobanServer.sendTransaction(signedTx) ← broadcast
+6. Poll sorobanServer.getTransaction()     ← confirm on-ledger
+```
+
+### Transaction Hash (Example Contract Call)
+
+> After making a contract call, the transaction hash is displayed with a direct explorer link.  
+> A real hash will appear here once a transfer is executed on testnet.
+
+**Verify on Explorer:** `https://stellar.expert/explorer/testnet/tx/{HASH}`
+
+---
+
+## 🚨 Error Handling (3 Types)
+
+| Error Type | Trigger | User Message |
+|-----------|---------|-------------|
+| `wallet_not_found` | No wallet extension detected or user closed modal without selecting | `🔌 No Wallet Found — Install Freighter from freighter.app` |
+| `user_rejected` | User clicks "Cancel" / "Reject" in wallet popup | `🚫 Transaction Cancelled — You declined the signing request. No funds were moved.` |
+| `insufficient_balance` | XLM balance < transfer amount + reserve | `💸 Insufficient Balance — Your XLM balance is too low. Fund your account at laboratory.stellar.org.` |
+
+All three error types are classified in `src/services/soroban.js → classifyError()` and displayed with distinct colored UI cards.
+
+---
+
+## 🕒 Transaction Status Tracking
+
+The `TransactionStatus` component supports three states:
+
+| State | Visual |
+|-------|--------|
+| `pending` | Animated spinner + shimmer progress bar (cyan/violet) |
+| `success` | Green card with transaction hash + Stellar Explorer link |
+| `error` | Red/yellow card with classified error type and message |
+
+---
+
+## 📡 Activity Feed (Real-Time Events)
+
+The `ActivityFeed` component (`src/components/ActivityFeed.jsx`):
+- Polls `sorobanServer.getEvents()` every **30 seconds** automatically
+- Filters for events from the SAC contract address
+- Displays: event type (topics), ledger number, timestamp
+- Shows live pulse indicator + manual refresh button
+
+---
+
+## 🏗️ Integration Phase Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                         USER BROWSER                             │
+│                                                                  │
+│  ┌────────────────────┐    ┌─────────────────────────────────┐  │
+│  │  Core Phase (left) │    │   Integration Phase (right)           │  │
+│  │                    │    │                                  │  │
+│  │  WalletConnect     │    │  ContractPanel.jsx               │  │
+│  │  BalanceCard       │    │  └─ sacTransfer() via Soroban   │  │
+│  │  SplitPaymentForm  │    │     └─ simulate → sign → send   │  │
+│  │  TransactionStatus │    │                                  │  │
+│  │  (+ pending state) │    │  ActivityFeed.jsx                │  │
+│  └────────────────────┘    │  └─ polls getEvents() / 30s     │  │
+│                            └─────────────────────────────────┘  │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │             WalletModal.jsx (multi-wallet picker)         │   │
+│  │  StellarWalletsKit.refreshSupportedWallets()              │   │
+│  │  → shows Freighter / LOBSTR / Albedo / xBull / Rabet     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┴──────────────────────┐
+        │                                            │
+┌───────▼──────────┐                    ┌────────────▼──────────────┐
+│ StellarWalletsKit│                    │   Soroban RPC             │
+│ (multi-wallet)   │                    │   soroban-testnet.stellar  │
+│                  │                    │   .org                     │
+│ setWallet(id)    │                    │                            │
+│ getAddress()     │                    │  simulateTransaction()     │
+│ signTransaction()│                    │  sendTransaction()         │
+└──────────────────┘                    │  getTransaction() [poll]  │
+                                        │  getEvents()              │
+                                        └────────────┬──────────────┘
+                                                     │
+                                          ┌──────────▼──────────┐
+                                          │  Stellar Testnet    │
+                                          │  Soroban VM         │
+                                          │  SAC Contract       │
+                                          └─────────────────────┘
+```
+
+---
+
+## 🆕 New Files (Integration Phase)
+
+| File | Purpose |
+|------|---------|
+| `src/services/walletKit.js` | StellarWalletsKit v2 static singleton + helpers |
+| `src/services/soroban.js` | Soroban RPC: simulate/send/poll + `classifyError()` |
+| `src/components/WalletModal.jsx` | Custom multi-wallet picker overlay |
+| `src/components/ContractPanel.jsx` | Soroban SAC transfer UI with all 3 tx states |
+| `src/components/ActivityFeed.jsx` | Live event feed polling contract every 30s |
+
+---
+
+## 🔧 Setup (Integration Phase additions)
+
+The `.env` file is already pre-configured with the SAC contract:
+
+```bash
+# Already set — no action needed
+VITE_CONTRACT_ID=CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
+```
+
+No Rust installation or contract compilation is required — the SAC is live on Stellar Testnet.
+
+```bash
+git clone https://github.com/pratickdutta/Smart-Split-Pay-dApp.git
+cd Smart-Split-Pay-dApp
+npm install
+npm run dev
+# App runs at http://localhost:5173
+```
+
+---
+
+## ✅ Integration Phase Submission Checklist
+
+- [x] Public GitHub repository
+- [x] README with setup instructions
+- [x] 2+ meaningful commits (`feat: integration-phase - multi-wallet kit, soroban SAC...` + previous)
+- [x] Live demo: [smart-split-ebon.vercel.app](https://smart-split-ebon.vercel.app/)
+- [x] **3 error types handled** — `wallet_not_found`, `user_rejected`, `insufficient_balance`
+- [x] **Contract deployed on testnet** — SAC `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
+- [x] **Contract called from frontend** — `ContractPanel.jsx` → `sacTransfer()` → Soroban RPC
+- [x] **Transaction status visible** — pending spinner / success hash / error card
+- [x] **Multi-wallet support** — StellarWalletsKit v2 with Freighter, LOBSTR, Albedo, xBull
+- [x] **Wallet options screenshot** — see Core Phase screenshots section above
+- [x] **Activity Feed** — polls Soroban events every 30s
+
+---
+
+> ⚠️ **Testnet only.** No real XLM is used. All transactions run on Stellar Testnet. Fund test accounts at [friendbot](https://laboratory.stellar.org/#account-creator?network=test).
+

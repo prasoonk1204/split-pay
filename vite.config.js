@@ -6,15 +6,13 @@ export default defineConfig({
   plugins: [
     react(),
     nodePolyfills({
+      // Polyfill Node.js built-ins needed by @stellar/stellar-sdk and @creit.tech/stellar-wallets-kit
       include: ['buffer', 'events', 'util', 'stream', 'process'],
       globals: {
         Buffer: true,
-        global: false,
+        global: false, // keep false — avoids triggering SSR mode in react-three-fiber
         process: true,
       },
     }),
   ],
-  define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-  },
 })

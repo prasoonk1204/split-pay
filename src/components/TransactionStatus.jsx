@@ -3,6 +3,38 @@ import { CheckCircle2, XCircle, ExternalLink, X } from 'lucide-react';
 export default function TransactionStatus({ status, error, hash, onClear }) {
   if (status === 'idle') return null;
 
+  // ── Integration Phase: pending state ──────────────────────────────────────────────
+  if (status === 'pending') {
+    return (
+      <div className="rounded-2xl animate-scale-in p-5 space-y-4"
+        style={{
+          background: 'linear-gradient(135deg, rgba(0,212,255,0.06) 0%, rgba(124,58,237,0.06) 100%)',
+          border: '1px solid rgba(0,212,255,0.2)',
+        }}>
+        <div className="flex items-center gap-3">
+          {/* Spinner */}
+          <div className="relative w-9 h-9 shrink-0">
+            <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20" />
+            <div className="absolute inset-0 rounded-full border-2 border-t-cyan-400 border-r-transparent border-b-transparent border-l-transparent spin-slow" />
+          </div>
+          <div>
+            <h4 className="font-display font-semibold text-sm" style={{ color: '#00d4ff' }}>
+              Broadcasting Transaction…
+            </h4>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+              Signing and submitting to Stellar Testnet
+            </p>
+          </div>
+        </div>
+        {/* Animated progress bar */}
+        <div className="w-full rounded-full overflow-hidden" style={{ height: 3, background: 'rgba(0,212,255,0.1)' }}>
+          <div className="h-full rounded-full shimmer"
+            style={{ background: 'linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff)', backgroundSize: '200%' }} />
+        </div>
+      </div>
+    );
+  }
+
   const isSuccess = status === 'success';
 
   return (
