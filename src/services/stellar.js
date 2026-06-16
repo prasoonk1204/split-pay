@@ -5,7 +5,7 @@ import {
   getAddress,
   signTransaction,
 } from "@stellar/freighter-api";
-import { Horizon, TransactionBuilder, Networks, Asset } from "@stellar/stellar-sdk";
+import { Horizon, TransactionBuilder, Networks, Asset, Operation, BASE_FEE } from "@stellar/stellar-sdk";
 import { signWithKit } from "./walletKit";
 
 // Initialize Stellar SDK for Testnet
@@ -59,11 +59,11 @@ export const sendPayment = async (senderPublicKey, destinationPublicKey, amount)
     const sourceAccount = await server.loadAccount(senderPublicKey);
 
     const transaction = new TransactionBuilder(sourceAccount, {
-      fee: Horizon.BASE_FEE,
+      fee: BASE_FEE,
       networkPassphrase: Networks.TESTNET,
     })
       .addOperation(
-        Horizon.Operation.payment({
+        Operation.payment({
           destination: destinationPublicKey,
           asset: Asset.native(),
           amount: String(amount),

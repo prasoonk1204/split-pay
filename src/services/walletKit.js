@@ -10,12 +10,23 @@ import {
   Networks as KitNetworks,
 } from '@creit.tech/stellar-wallets-kit';
 
+import { FreighterModule } from '@creit.tech/stellar-wallets-kit/modules/freighter';
+import { LobstrModule } from '@creit.tech/stellar-wallets-kit/modules/lobstr';
+import { AlbedoModule } from '@creit.tech/stellar-wallets-kit/modules/albedo';
+import { xBullModule } from '@creit.tech/stellar-wallets-kit/modules/xbull';
+
 let initialized = false;
 
 export const initKit = () => {
   if (initialized) return;
   StellarWalletsKit.init({
     network: KitNetworks.TESTNET,
+    modules: [
+      new FreighterModule(),
+      new LobstrModule(),
+      new AlbedoModule(),
+      new xBullModule()
+    ]
   });
   initialized = true;
 };

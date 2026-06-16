@@ -4,9 +4,11 @@
  *
  * Uses the Stellar Native Asset Contract (SAC) — already live on testnet.
  * Contract ID: CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
+ *
+ * NOTE: In @stellar/stellar-sdk v15, SorobanRpc was renamed to `rpc` (lowercase).
  */
 import {
-  SorobanRpc,
+  rpc,
   TransactionBuilder,
   Networks,
   Contract,
@@ -20,7 +22,7 @@ export const CONTRACT_ID =
   import.meta.env.VITE_CONTRACT_ID ||
   'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC';
 
-const sorobanServer = new SorobanRpc.Server(
+const sorobanServer = new rpc.Server(
   'https://soroban-testnet.stellar.org',
   { allowHttp: false }
 );
@@ -96,11 +98,11 @@ export const callContract = async (publicKey, fnName, args = []) => {
 
   // Simulate first
   const simResult = await sorobanServer.simulateTransaction(tx);
-  if (SorobanRpc.Api.isSimulationError(simResult)) {
+  if (rpc.Api.isSimulationError(simResult)) {
     throw new Error(`Simulation failed: ${simResult.error}`);
   }
 
-  const preparedTx = SorobanRpc.assembleTransaction(tx, simResult).build();
+  const preparedTx = rpc.assembleTransaction(tx, simResult).build();
   const signedXdr = await signWithKit(preparedTx.toXDR());
   const signedTx = TransactionBuilder.fromXDR(signedXdr, Networks.TESTNET);
 
@@ -117,11 +119,11 @@ export const callContract = async (publicKey, fnName, args = []) => {
     getResult = await sorobanServer.getTransaction(sendResult.hash);
     attempts++;
   } while (
-    getResult.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND &&
+    getResult.status === rpc.Api.GetTransactionStatus.NOT_FOUND &&
     attempts < 15
   );
 
-  if (getResult.status === SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+  if (getResult.status === rpc.Api.GetTransactionStatus.SUCCESS) {
     const returnVal = getResult.returnValue ? scValToNative(getResult.returnValue) : null;
     return { hash: sendResult.hash, result: returnVal };
   }
