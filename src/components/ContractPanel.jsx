@@ -64,7 +64,7 @@ export default function ContractPanel({ publicKey, onResult }) {
           </div>
           <div>
             <h3 className="font-display font-bold text-sm" style={{ color: 'var(--text-primary)' }}>
-              Soroban Contract Transfer
+              Split &amp; Pay
             </h3>
             <a
               href={CONTRACT_EXPLORER}

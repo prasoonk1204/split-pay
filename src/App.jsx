@@ -3,8 +3,6 @@ import { useState } from 'react';
 // ── Core Phase components (unchanged) ────────────────────────────────────────
 import WalletConnect from './components/WalletConnect';
 import BalanceCard from './components/BalanceCard';
-import SplitPaymentForm from './components/SplitPaymentForm';
-import TransactionStatus from './components/TransactionStatus';
 import Background3D from './components/Background3D';
 import FreighterNotice from './components/FreighterNotice';
 
@@ -17,7 +15,6 @@ import ActivityFeed from './components/ActivityFeed';
 import {
   connectWallet,
   getAccountBalance,
-  sendPayment,
   openKitModal,
   disconnectKit,
   classifyError,
@@ -29,12 +26,6 @@ function App() {
   const [balance, setBalance] = useState('0.00');
   const [loading, setLoading] = useState(false);
 
-  // ── Transaction state (Core Phase: idle/success/error + Integration Phase: pending) ─
-  const [txStatus, setTxStatus] = useState('idle');
-  const [txHash, setTxHash] = useState('');
-  const [txError, setTxError] = useState('');
-  const [txErrorType, setTxErrorType] = useState('');
-
   // ── Integration Phase: multi-wallet modal state ────────────────────────────────────
   const [showWalletModal, setShowWalletModal] = useState(false);
 
@@ -42,13 +33,6 @@ function App() {
   const [showFreighterNotice, setShowFreighterNotice] = useState(false);
 
   // ─────────────────────────────────────────────────────────────────────────────
-
-  const resetTx = () => {
-    setTxStatus('idle');
-    setTxHash('');
-    setTxError('');
-    setTxErrorType('');
-  };
 
   const updateBalance = async (pk) => {
     try {
@@ -71,9 +55,6 @@ function App() {
     if (err || !address) {
       const classified = classifyError(err || new Error('user_closed'));
       if (classified.type === 'wallet_not_found') setShowFreighterNotice(true);
-      setTxStatus('error');
-      setTxError(classified.message);
-      setTxErrorType(classified.type);
       return;
     }
     setPublicKey(address);
@@ -84,32 +65,7 @@ function App() {
     disconnectKit();
     setPublicKey(null);
     setBalance('0.00');
-    resetTx();
     setShowFreighterNotice(false);
-  };
-
-  // ── Core Phase: Horizon XLM payment (pending state added) ────────────────────
-  const handleSendPayment = async (recipient, amount) => {
-    if (!publicKey) return;
-    setLoading(true);
-    setTxStatus('pending'); // Integration Phase: pending state
-    setTxHash('');
-    setTxError('');
-    setTxErrorType('');
-
-    try {
-      const result = await sendPayment(publicKey, recipient, amount);
-      setTxStatus('success');
-      setTxHash(result.hash);
-      setTimeout(() => updateBalance(publicKey), 4000);
-    } catch (error) {
-      const classified = classifyError(error);
-      setTxStatus('error');
-      setTxError(classified.message);
-      setTxErrorType(classified.type);
-    } finally {
-      setLoading(false);
-    }
   };
 
   // ── Integration Phase: Contract Panel result handler ────────────────────────────────
@@ -166,11 +122,6 @@ function App() {
             <span className="font-display font-bold text-base tracking-tight" style={{ color: 'var(--text-primary)' }}>
               SmartSplit
             </span>
-            {/* Integration Phase badge */}
-            <span className="px-2 py-0.5 rounded-full text-xs font-bold"
-              style={{ background: 'rgba(234,179,8,0.12)', border: '1px solid rgba(234,179,8,0.25)', color: '#eab308' }}>
-              🥋 Integration Phase
-            </span>
           </div>
 
           {/* Network badge */}
@@ -204,7 +155,7 @@ function App() {
           {publicKey ? (
             /* ── Connected: two-column layout ── */
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Left column — Core Phase features */}
+              {/* Left column */}
               <div className="space-y-4">
                 <WalletConnect
                   publicKey={publicKey}
@@ -213,23 +164,14 @@ function App() {
                   loading={loading && !publicKey}
                 />
                 <BalanceCard balance={balance} publicKey={publicKey} />
-                <SplitPaymentForm onSend={handleSendPayment} loading={loading} />
-                {txStatus !== 'idle' && (
-                  <TransactionStatus
-                    status={txStatus}
-                    error={txError}
-                    hash={txHash}
-                    onClear={resetTx}
-                  />
-                )}
-              </div>
-
-              {/* Right column — Integration Phase features */}
-              <div className="space-y-4">
                 <ContractPanel
                   publicKey={publicKey}
                   onResult={handleContractResult}
                 />
+              </div>
+
+              {/* Right column */}
+              <div className="space-y-4">
                 <ActivityFeed />
               </div>
             </div>
@@ -242,14 +184,6 @@ function App() {
                 onDisconnect={handleDisconnect}
                 loading={loading && !publicKey}
               />
-              {txStatus !== 'idle' && (
-                <TransactionStatus
-                  status={txStatus}
-                  error={txError}
-                  hash={txHash}
-                  onClear={resetTx}
-                />
-              )}
             </div>
           )}
         </div>
