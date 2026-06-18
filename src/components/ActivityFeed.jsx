@@ -8,7 +8,10 @@ import { fetchContractEvents, CONTRACT_ID } from '../services/soroban';
 const CONTRACT_EXPLORER = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`;
 
 export default function ActivityFeed() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(() => {
+    const cached = localStorage.getItem('smartsplit_events');
+    return cached ? JSON.parse(cached) : [];
+  });
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(null);
 
@@ -17,8 +20,9 @@ export default function ActivityFeed() {
     try {
       const evs = await fetchContractEvents();
       setEvents(evs);
+      localStorage.setItem('smartsplit_events', JSON.stringify(evs));
     } catch {
-      // silent fail — feed shows empty
+      // silent fail — feed shows empty or keeps cache
     } finally {
       setLoading(false);
       setLastRefresh(new Date().toLocaleTimeString());

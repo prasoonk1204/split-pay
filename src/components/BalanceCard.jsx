@@ -1,6 +1,6 @@
 import { TrendingUp, RefreshCw } from 'lucide-react';
 
-export default function BalanceCard({ balance, publicKey }) {
+export default function BalanceCard({ balance, publicKey, isLoading }) {
   return (
     <div
       className="relative rounded-2xl overflow-hidden"
@@ -63,24 +63,30 @@ export default function BalanceCard({ balance, publicKey }) {
 
         {/* Balance display */}
         <div className="mb-6">
-          <div className="flex items-end gap-3">
-            <span
-              className="font-display font-bold text-5xl leading-none"
-              style={{
-                background: 'linear-gradient(135deg, #ffffff 0%, rgba(0,212,255,0.9) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              {balance}
-            </span>
-            <span
-              className="font-display font-bold text-xl mb-1"
-              style={{ color: 'rgba(0,212,255,0.6)' }}
-            >
-              XLM
-            </span>
+          <div className="flex items-end gap-3 h-14">
+            {isLoading ? (
+              <div className="h-12 w-48 rounded-lg shimmer" style={{ background: 'rgba(0,212,255,0.1)', backgroundImage: 'linear-gradient(90deg, rgba(0,212,255,0.05) 0%, rgba(0,212,255,0.15) 50%, rgba(0,212,255,0.05) 100%)', backgroundSize: '200% 100%' }} />
+            ) : (
+              <>
+                <span
+                  className="font-display font-bold text-5xl leading-none"
+                  style={{
+                    background: 'linear-gradient(135deg, #ffffff 0%, rgba(0,212,255,0.9) 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  {balance}
+                </span>
+                <span
+                  className="font-display font-bold text-xl mb-1"
+                  style={{ color: 'rgba(0,212,255,0.6)' }}
+                >
+                  XLM
+                </span>
+              </>
+            )}
           </div>
         </div>
 

@@ -15,4 +15,18 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: ['url', 'zlib'],
+    },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    server: {
+      deps: {
+        inline: [/@stellar\/freighter-api/, /@creit\.tech\/stellar-wallets-kit/]
+      }
+    }
+  }
 })

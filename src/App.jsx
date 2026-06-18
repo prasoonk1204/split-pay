@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // ── Core Phase components (unchanged) ────────────────────────────────────────
 import WalletConnect from './components/WalletConnect';
@@ -20,6 +20,8 @@ import {
   classifyError,
 } from './services/stellar';
 
+import { StellarWalletsKit, initKit } from './services/walletKit';
+
 function App() {
   // ── Shared state ─────────────────────────────────────────────────────────────
   const [publicKey, setPublicKey] = useState(null);
@@ -32,14 +34,32 @@ function App() {
   // ── Core Phase: Freighter missing notice ─────────────────────────────────────
   const [showFreighterNotice, setShowFreighterNotice] = useState(false);
 
+  // ── Hardening Phase: Loading/Caching state ───────────────────────────────────────
+  const [isFetchingBalance, setIsFetchingBalance] = useState(false);
+
+  // Auto-reconnect flow
+  useEffect(() => {
+    const savedAddress = localStorage.getItem('smartsplit_address');
+    const savedType = localStorage.getItem('smartsplit_walletType');
+    if (savedAddress && savedType) {
+      initKit();
+      StellarWalletsKit.setWallet(savedType);
+      setPublicKey(savedAddress);
+      updateBalance(savedAddress);
+    }
+  }, []);
+
   // ─────────────────────────────────────────────────────────────────────────────
 
   const updateBalance = async (pk) => {
+    setIsFetchingBalance(true);
     try {
       const bal = await getAccountBalance(pk);
       setBalance(bal);
     } catch {
       setBalance('Error');
+    } finally {
+      setIsFetchingBalance(false);
     }
   };
 
@@ -50,7 +70,7 @@ function App() {
   };
 
   // Called when user picks a wallet in WalletModal
-  const handleWalletConnected = async (address, err) => {
+  const handleWalletConnected = async (address, err, walletType = 'freighter') => {
     setShowWalletModal(false);
     if (err || !address) {
       const classified = classifyError(err || new Error('user_closed'));
@@ -58,6 +78,9 @@ function App() {
       return;
     }
     setPublicKey(address);
+    // Cache the session
+    localStorage.setItem('smartsplit_address', address);
+    localStorage.setItem('smartsplit_walletType', walletType);
     await updateBalance(address);
   };
 
@@ -65,6 +88,8 @@ function App() {
     disconnectKit();
     setPublicKey(null);
     setBalance('0.00');
+    localStorage.removeItem('smartsplit_address');
+    localStorage.removeItem('smartsplit_walletType');
     setShowFreighterNotice(false);
   };
 
@@ -163,7 +188,7 @@ function App() {
                   onDisconnect={handleDisconnect}
                   loading={loading && !publicKey}
                 />
-                <BalanceCard balance={balance} publicKey={publicKey} />
+                <BalanceCard balance={balance} publicKey={publicKey} isLoading={isFetchingBalance} />
                 <ContractPanel
                   publicKey={publicKey}
                   onResult={handleContractResult}

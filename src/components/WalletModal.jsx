@@ -21,7 +21,7 @@ export default function WalletModal({ onConnected, onClose }) {
       // 🔥 CRITICAL FIX: fetchAddress() initiates the connection prompt in the extension.
       // getAddress() only reads from the Kit's local memory, which is empty right now.
       const { address } = await StellarWalletsKit.fetchAddress();
-      onConnected(address);
+      onConnected(address, null, wallet.id);
     } catch (err) {
       console.error('WalletModal handlePick Error:', err);
       onConnected(null, err);
