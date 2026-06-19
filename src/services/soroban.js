@@ -137,16 +137,22 @@ export const callContract = async (publicKey, fnName, args = []) => {
  * Transfer XLM via the Soroban Native Asset Contract (SAC).
  * This is the Integration Phase "contract called from frontend" proof.
  */
-export const sacTransfer = async (senderPublicKey, recipientPublicKey, amountXlm) => {
-  const amountStroops = BigInt(Math.round(parseFloat(amountXlm) * 1e7));
+export const sacTransfer = async (senderPublicKey, recipientPublicKeys, amountXlmSplit) => {
+  const amountStroops = BigInt(Math.round(parseFloat(amountXlmSplit) * 1e7));
 
-  const args = [
-    nativeToScVal(Address.fromString(senderPublicKey), { type: 'address' }),
-    nativeToScVal(Address.fromString(recipientPublicKey), { type: 'address' }),
-    nativeToScVal(amountStroops, { type: 'i128' }),
-  ];
+  let lastHash = null;
 
-  return callContract(senderPublicKey, 'transfer', args);
+  for (const recipient of recipientPublicKeys) {
+    const args = [
+      nativeToScVal(Address.fromString(senderPublicKey), { type: 'address' }),
+      nativeToScVal(Address.fromString(recipient), { type: 'address' }),
+      nativeToScVal(amountStroops, { type: 'i128' }),
+    ];
+    const res = await callContract(senderPublicKey, 'transfer', args);
+    lastHash = res.hash;
+  }
+
+  return { hash: lastHash };
 };
 
 // ─── EVENTS ──────────────────────────────────────────────────────────────────

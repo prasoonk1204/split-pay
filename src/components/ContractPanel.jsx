@@ -10,22 +10,26 @@ const EXPLORER_BASE = 'https://stellar.expert/explorer/testnet/tx/';
 const CONTRACT_EXPLORER = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`;
 
 export default function ContractPanel({ publicKey, onResult }) {
-  const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
+  const [splitCount, setSplitCount] = useState(2);
+  const [recipients, setRecipients] = useState(['']);
   const [status, setStatus] = useState('idle'); // idle | pending | success | error
   const [txHash, setTxHash] = useState('');
   const [errorInfo, setErrorInfo] = useState(null);
 
   const handleTransfer = async (e) => {
     e.preventDefault();
-    if (!publicKey || !recipient.trim() || !amount) return;
+    const activeRecipients = recipients.map(r => r.trim()).filter(Boolean);
+    if (!publicKey || activeRecipients.length !== splitCount - 1 || !amount) return;
 
     setStatus('pending');
     setTxHash('');
     setErrorInfo(null);
 
     try {
-      const result = await sacTransfer(publicKey, recipient.trim(), amount);
+      const safeDivisor = Math.max(2, parseInt(splitCount, 10) || 2);
+      const splitValue = (parseFloat(amount) / safeDivisor).toFixed(7);
+      const result = await sacTransfer(publicKey, activeRecipients, splitValue);
       setTxHash(result.hash);
       setStatus('success');
       if (onResult) onResult({ type: 'success', hash: result.hash });
@@ -84,63 +88,86 @@ export default function ContractPanel({ publicKey, onResult }) {
 
         {status === 'idle' && (
           <form onSubmit={handleTransfer} className="space-y-3" id="contract-transfer-form">
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
-                Recipient Address
-              </label>
-              <input
-                id="contract-recipient"
-                type="text"
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
-                placeholder="G…"
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl text-sm font-mono placeholder-gray-600 outline-none transition-all"
-                style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(124,58,237,0.2)',
-                  color: 'var(--text-primary)',
-                }}
-                onFocus={(e) => (e.target.style.borderColor = 'rgba(124,58,237,0.5)')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(124,58,237,0.2)')}
-              />
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                  Total Bill (XLM)
+                </label>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                  min="0.0000001"
+                  step="any"
+                  required
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm placeholder-gray-600 outline-none transition-all"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(124,58,237,0.2)', color: 'white' }}
+                />
+              </div>
+              <div className="w-1/3">
+                <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                  Divided By
+                </label>
+                <input
+                  type="number"
+                  value={splitCount}
+                  onChange={(e) => {
+                    setSplitCount(e.target.value);
+                    const parsed = parseInt(e.target.value, 10);
+                    // Native HTML validation min="2" catches submit. Here we just ensure N-1 renders safely.
+                    const safeCount = (isNaN(parsed) || parsed < 2) ? 2 : parsed;
+                    setRecipients(prev => {
+                      const updated = [...prev];
+                      while (updated.length < safeCount - 1) updated.push('');
+                      return updated.slice(0, safeCount - 1);
+                    });
+                  }}
+                  min="2"
+                  max="10"
+                  required
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm placeholder-gray-600 outline-none transition-all text-center"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(124,58,237,0.2)', color: 'white' }}
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
-                Amount (XLM)
-              </label>
-              <input
-                id="contract-amount"
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-                min="0.0000001"
-                step="any"
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl text-sm placeholder-gray-600 outline-none transition-all"
-                style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(124,58,237,0.2)',
-                  color: 'var(--text-primary)',
-                }}
-                onFocus={(e) => (e.target.style.borderColor = 'rgba(124,58,237,0.5)')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(124,58,237,0.2)')}
-              />
-            </div>
+            {/* Render N-1 Address Inputs */}
+            {recipients.map((rec, idx) => {
+              const safeDivisor = Math.max(2, parseInt(splitCount, 10) || 2);
+              return (
+              <div key={idx}>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+                  Payee {idx + 1} Address (gets {(parseFloat(amount || 0) / safeDivisor).toFixed(4)} XLM)
+                </label>
+                <input
+                  type="text"
+                  value={rec}
+                  onChange={(e) => {
+                    const newR = [...recipients];
+                    newR[idx] = e.target.value;
+                    setRecipients(newR);
+                  }}
+                  placeholder="G…"
+                  required
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm font-mono placeholder-gray-600 outline-none transition-all"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(124,58,237,0.2)', color: 'white' }}
+                />
+              </div>
+              );
+            })}
 
             <button
               id="contract-transfer-btn"
               type="submit"
-              className="w-full py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.01] hover:brightness-110"
+              className="w-full mt-2 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.01] hover:brightness-110"
               style={{
                 background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
                 color: 'white',
                 boxShadow: '0 0 20px rgba(124,58,237,0.3)',
               }}
             >
-              ⚡ Transfer via Soroban
+              ⚡ Atomic Split via Soroban
             </button>
           </form>
         )}
