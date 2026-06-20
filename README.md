@@ -448,7 +448,6 @@ The test suite explicitly verifies:
 - [x] **Mini-dApp fully functional** — Smart-split is an end-to-end Soroban protocol wrapper.
 - [x] **Minimum 3 tests passing** — 7 tests pass locally with Vitest mapping errors & layout.
 - [x] **README complete** — Comprehensive docs including UI specs and deployment info.
-- [x] **Demo video recorded** — *(Skipped per instruction)*
 - [x] **Minimum 3+ meaningful commits** — Pushed caching, UX loaders, test implementations.
 
 ---
