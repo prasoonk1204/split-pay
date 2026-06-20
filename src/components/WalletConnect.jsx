@@ -46,7 +46,7 @@ export default function WalletConnect({ publicKey, onConnect, onDisconnect, load
             )}
           </div>
 
-          <div>
+          <div className="flex-1 min-w-0">
             <p
               className="text-xs font-medium uppercase tracking-widest mb-0.5"
               style={{ color: 'var(--text-muted)' }}

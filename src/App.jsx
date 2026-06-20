@@ -131,7 +131,7 @@ function App() {
       </div>
 
       {/* ── Main UI ── */}
-      <div className="relative min-h-screen flex flex-col items-center justify-start py-10 px-4" style={{ zIndex: 2 }}>
+      <div className="relative min-h-screen flex flex-col items-center justify-start py-6 sm:py-10 px-4 sm:px-6" style={{ zIndex: 2 }}>
 
         {/* Navbar */}
         <nav className="w-full max-w-4xl mb-8 flex items-center justify-between">

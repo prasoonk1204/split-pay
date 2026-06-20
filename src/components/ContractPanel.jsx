@@ -88,7 +88,7 @@ export default function ContractPanel({ publicKey, onResult }) {
 
         {status === 'idle' && (
           <form onSubmit={handleTransfer} className="space-y-3" id="contract-transfer-form">
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
                 <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
                   Total Bill (XLM)
