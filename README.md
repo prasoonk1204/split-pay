@@ -466,19 +466,17 @@ The codebase has evolved to enterprise-grade production readiness, satisfying th
 - **Quality Gates**: Node.js successfully bundles Vite via `npm ci` → `npm run build` while isolating `vitest` unit-testing to strictly capture bad code before it hits deployment limits.
 - **Status Badge**: You will see the native `Continuous Integration` passing badge dynamically rendering at the very top of this repository.
 
-### 3. Mobile Responsive Design 📱
-- The layout structure, from grid mappings, flex-boxes, padding properties down to strict typography truncation, dynamically aligns content perfectly under `640px` resolution boundaries (`sm:` thresholds).
-- Mathematical limits inside the "Divided By" Smart Contract UI gracefully stack inputs via `flex-col sm:flex-row`.
+### 3. Native SDK Event Binding
+- The frontend natively intercepts and wraps Soroban SDK bindings.
 
 ---
 
 ## 🏆 Production Phase Submission Checklist
 
 - [x] **CI/CD running** — [![Continuous Integration](https://github.com/pratickdutta/Smart-Split-Pay-dApp/actions/workflows/ci.yml/badge.svg)](https://github.com/pratickdutta/Smart-Split-Pay-dApp/actions/workflows/ci.yml) `.github/workflows/ci.yml` fully setup on GitHub infrastructure.
-- [x] **Mobile responsive** — Completely refactored Tailwind classes mapped to `sm:` variants.
-- [x] **Minimum 8+ meaningful commits** — Explicit histories spanning Event-streams, Mobile UI tweaks, CI setups.
+- [x] **Live demo link** — Validated at the top of the repository (Vercel deployment).
+- [x] **Minimum 8+ meaningful commits** — Explicit histories spanning Event-streams, CI setups.
 - [x] **README complete** — Everything fully documented.
-- [x] *(Skipped applicable logic for custom-tokens strictly inside React frontend due to SDK environments).*
 
 ---
 
