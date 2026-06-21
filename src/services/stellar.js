@@ -6,8 +6,6 @@ import {
   signTransaction,
 } from "@stellar/freighter-api";
 import { Horizon, TransactionBuilder, Networks, Asset, Operation, BASE_FEE } from "@stellar/stellar-sdk";
-import { signWithKit } from "./walletKit";
-
 // Initialize Stellar SDK for Testnet
 const server = new Horizon.Server("https://horizon-testnet.stellar.org");
 

@@ -13,9 +13,7 @@ import ActivityFeed from './components/ActivityFeed';
 
 // ── Services ─────────────────────────────────────────────────────────────────
 import {
-  connectWallet,
   getAccountBalance,
-  openKitModal,
   disconnectKit,
   classifyError,
 } from './services/stellar';

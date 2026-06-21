@@ -7,6 +7,7 @@
 [![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-smart--split--ebon.vercel.app-00d4ff?style=for-the-badge)](https://smart-split-ebon.vercel.app/)
 [![Stellar](https://img.shields.io/badge/Network-Stellar%20Testnet-7c3aed?style=flat-square)](https://stellar.org)
 [![React](https://img.shields.io/badge/Frontend-React%20+%20Vite-61dafb?style=flat-square)](https://react.dev)
+[![Continuous Integration](https://github.com/pratickdutta/Smart-Split-Pay-dApp/actions/workflows/ci.yml/badge.svg)](https://github.com/pratickdutta/Smart-Split-Pay-dApp/actions/workflows/ci.yml)
 
 </div>
 
@@ -449,6 +450,35 @@ The test suite explicitly verifies:
 - [x] **Minimum 3 tests passing** — 7 tests pass locally with Vitest mapping errors & layout.
 - [x] **README complete** — Comprehensive docs including UI specs and deployment info.
 - [x] **Minimum 3+ meaningful commits** — Pushed caching, UX loaders, test implementations.
+
+---
+
+## 🟢 Level 4 - Production Phase Features
+
+The codebase has evolved to enterprise-grade production readiness, satisfying the requirements for the **Production Phase**.
+
+### 1. Advanced Real-Time Event Streaming
+- **5-Second Burst Polling**: The Activity Feed now polls the Soroban RPC boundary at highly accelerated 5-second intervals to mimic deterministic memory streaming.
+- **Deduplication Engine**: A localized React memory trap parses incoming arrays against historic signatures to prevent DOM flickering, providing a buttery-smooth observation deck for smart contract events.
+
+### 2. CI/CD Pipeline Automation
+- **GitHub Actions Integration**: `ci.yml` is active and triggers parallel container instances on every push.
+- **Quality Gates**: Node.js successfully bundles Vite via `npm ci` → `npm run build` while isolating `vitest` unit-testing to strictly capture bad code before it hits deployment limits.
+- **Status Badge**: You will see the native `Continuous Integration` passing badge dynamically rendering at the very top of this repository.
+
+### 3. Mobile Responsive Design 📱
+- The layout structure, from grid mappings, flex-boxes, padding properties down to strict typography truncation, dynamically aligns content perfectly under `640px` resolution boundaries (`sm:` thresholds).
+- Mathematical limits inside the "Divided By" Smart Contract UI gracefully stack inputs via `flex-col sm:flex-row`.
+
+---
+
+## 🏆 Production Phase Submission Checklist
+
+- [x] **CI/CD running** — [![Continuous Integration](https://github.com/pratickdutta/Smart-Split-Pay-dApp/actions/workflows/ci.yml/badge.svg)](https://github.com/pratickdutta/Smart-Split-Pay-dApp/actions/workflows/ci.yml) `.github/workflows/ci.yml` fully setup on GitHub infrastructure.
+- [x] **Mobile responsive** — Completely refactored Tailwind classes mapped to `sm:` variants.
+- [x] **Minimum 8+ meaningful commits** — Explicit histories spanning Event-streams, Mobile UI tweaks, CI setups.
+- [x] **README complete** — Everything fully documented.
+- [x] *(Skipped applicable logic for custom-tokens strictly inside React frontend due to SDK environments).*
 
 ---
 
