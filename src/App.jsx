@@ -184,7 +184,7 @@ function App() {
                   publicKey={publicKey}
                   onConnect={handleConnect}
                   onDisconnect={handleDisconnect}
-                  loading={loading && !publicKey}
+                  loading={false}
                 />
                 <BalanceCard balance={balance} publicKey={publicKey} isLoading={isFetchingBalance} />
                 <ContractPanel
@@ -205,7 +205,7 @@ function App() {
                 publicKey={publicKey}
                 onConnect={handleConnect}
                 onDisconnect={handleDisconnect}
-                loading={loading && !publicKey}
+                loading={false}
               />
             </div>
           )}
