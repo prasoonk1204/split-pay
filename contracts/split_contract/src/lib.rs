@@ -19,4 +19,13 @@ impl SmartSplitContract {
         // Execute the atomic transfer
         token_client.transfer(&from, &to, &amount);
     }
+
+    /// Demonstrates inter-contract communication by routing a split through a secondary contract.
+    pub fn route_split(env: Env, proxy_contract: Address, from: Address, to: Address, amount: i128) {
+        from.require_auth();
+        // Invoke the secondary proxy contract using inter-contract communication
+        env.invoke_contract::<()>(&proxy_contract, &soroban_sdk::Symbol::new(&env, "proxy_transfer"), soroban_sdk::vec![&env, from.into_val(&env), to.into_val(&env), amount.into_val(&env)]);
+    }
 }
+
+mod test;
