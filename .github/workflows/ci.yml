@@ -25,6 +25,17 @@ jobs:
       - name: 📦 Install Dependencies
         run: npm install
 
+      - name: 🦀 Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: 🧪 Run Soroban Contract Tests
+        run: make test
+
+      - name: ⚙️ Build Soroban Contract
+        run: make build
+
       - name: 🧪 Run Vitest Test Suite
         run: npm run test
 
