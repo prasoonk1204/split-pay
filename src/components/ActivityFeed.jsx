@@ -1,5 +1,5 @@
 /**
- * ActivityFeed.jsx — Integration Phase: real-time Soroban event feed
+ * ActivityFeed.jsx — Real-time Soroban event streaming feed
  * Polls the Soroban RPC for recent contract events every 30 seconds.
  */
 import { useEffect, useState, useCallback } from 'react';

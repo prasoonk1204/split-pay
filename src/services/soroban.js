@@ -1,6 +1,6 @@
 /**
  * soroban.js — Soroban RPC interactions
- * Integration Phase: contract calls, events, error classification
+ * Features: contract calls, real-time event streaming, explicit error classification
  *
  * Uses the Stellar Native Asset Contract (SAC) — already live on testnet.
  * Contract ID: CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
