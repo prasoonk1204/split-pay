@@ -1,44 +1,79 @@
 # Split Pay
 
 ## Project Overview
-Split Pay is a modern decentralized application (dApp) built on the Stellar network using Soroban smart contracts. It allows users to easily split expenses, manage shared bills, and settle payments transparently on the blockchain.
+Split Pay is a comprehensive, production-ready decentralized application (dApp) built on the Stellar network using Soroban smart contracts. It allows users to easily split expenses, manage shared bills, and settle payments transparently on the blockchain. This project acts as an end-to-end implementation of advanced Stellar development patterns on the testnet.
 
-## Features
-- **Multi-Wallet Support:** Connect with Freighter, LOBSTR, Albedo, or xBull.
-- **Smart Contract Integration:** Utilizes Soroban to securely record and manage shared expenses.
-- **Real-time Activity Feed:** Monitor events and transactions seamlessly.
-- **Atomic Settlement:** Process complex multi-node splits in a single atomic transaction.
-- **Performance Optimized:** Includes event streaming deduplication and caching for a flicker-free UI.
-- **Responsive Design:** Premium 3D interactive background with a fully mobile-optimized layout.
+## Core Features & Functionality
 
-## Architecture
-- **Frontend:** React, Vite, Tailwind CSS, Three.js (React Three Fiber)
-- **Blockchain Integration:** Stellar SDK v15, Stellar Wallets Kit
-- **Smart Contracts:** Rust (Soroban)
-- **Testing:** Vitest
+### 1. Wallet Integration & Balance Handling
+- **Multi-Wallet Support:** Users can securely connect via Freighter, LOBSTR, Albedo, or xBull using StellarWalletsKit.
+- **Real-time Balance:** Seamlessly fetches and displays the connected wallet's XLM testnet balance.
+- **Wallet Connection State:** Clear UI states for disconnected, connecting, and connected scenarios.
 
-## Smart Contract Overview
-The Split Pay smart contract handles the core logic for mapping payees, resolving balances, and executing split transactions. It ensures that funds are settled correctly according to the provided parameters without relying on off-chain trust.
+### 2. Smart Contract Operations
+- **Soroban Integration:** Utilizes advanced, optimized Rust smart contracts deployed on the Soroban testnet.
+- **Transaction Flow:** End-to-end execution of XLM transactions with multi-node atomic split logic.
+- **Inter-Contract Communication:** Contract routes split calls through a secondary proxy layer to demonstrate secure contract-to-contract message passing.
+- **Transaction Tracking:** Provides clear, real-time transaction feedback (success/fail/pending) along with on-chain hashes.
 
-## Installation
+### 3. Real-Time Data & Event Streaming
+- **Live Activity Feed:** Listens to contract events and syncs the UI state in real-time.
+- **Event Deduplication:** Implements intelligent caching to prevent UI flickering during continuous polling.
+
+### 4. Robust Error Handling
+Explicit handling and classification for critical edge cases:
+1. **Wallet Not Found:** Prompts to install Freighter/compatible wallet.
+2. **User Rejected:** Detects when a user declines a signature request.
+3. **Insufficient Balance:** Catches underfunded accounts before attempting network submissions.
+
+### 5. Production-Ready Architecture
+- **Mobile Responsive Frontend:** Adaptive layouts for smartphone dimensions (Tailwind CSS, React).
+- **Automated CI/CD Pipeline:** Fully integrated GitHub Actions workflow for building and testing both the React frontend and the Rust smart contracts.
+- **Testing Infrastructure:** Vitest suite covering UI components and Soroban state generation, paired with native Rust unit tests for the smart contract layer.
+- **Deployment Workflow:** Streamlined `Makefile` and bash scripts to optimize and deploy WASM binaries reliably.
+
+---
+
+## 📌 Important Links & Verifications
+
+- **Live Demo Link:** [Insert Live URL Here]
+- **Demo Video:** [demo-video.mp4](./demo-video.mp4)
+- **Deployed Contract Address:** `[Insert Contract ID Here]`
+- **Contract Interaction Hash:** `[Insert Tx Hash Here]`
+
+### Screenshots
+- **Wallet Options:** ![Wallet Options](screenshots/wallet-options.png)
+- **Wallet Connected & Balance:** ![Wallet Connected](screenshots/wallet-connected.png)
+- **Mobile Responsive UI:** ![Mobile UI](screenshots/mobile-ui.png)
+- **Successful Testnet Transaction:** ![Testnet Transaction](screenshots/testnet-transaction.png)
+- **Automated Test Output (3+ Passing):** ![Test Output](screenshots/test-output.png)
+- **CI/CD Pipeline Running:** ![CI/CD Status](screenshots/ci-cd.png)
+
+---
+
+## Installation & Setup
+
 ```bash
+# Install dependencies
 npm install
-```
 
-## Development
-```bash
+# Run the development server
 npm run dev
+
+# Run frontend tests
+npm run test
 ```
 
-## Deployment
-Deployment scripts for the Soroban smart contract will be available in the `scripts/` directory.
+## Smart Contract Development
+
 ```bash
-# Deploy to testnet
-npm run deploy:testnet
-```
+# Build and optimize the contract
+make build
+make optimize
 
-## Usage
-1. Connect your Stellar wallet.
-2. Create a new split payment request.
-3. Share with participants to collect funds.
-4. Settle seamlessly on-chain.
+# Run Rust contract tests
+make test
+
+# Deploy to Testnet
+make deploy
+```
