@@ -5,15 +5,15 @@
 echo "🚀 Starting Soroban contract deployment to Testnet..."
 
 # Ensure we have the identity
-if ! soroban config identity ls | grep -q "deployer"; then
+if ! stellar keys ls | grep -q "deployer"; then
     echo "Creating new identity 'deployer'..."
-    soroban config identity generate --network testnet deployer
+    stellar keys generate deployer
 fi
 
 # Deploy the optimized contract
 echo "Deploying WASM to testnet..."
-CONTRACT_ID=$(soroban contract deploy \
-  --wasm contracts/split_contract/target/wasm32-unknown-unknown/release/split_contract.wasm \
+CONTRACT_ID=$(stellar contract deploy \
+  --wasm contracts/split_contract/target/wasm32-unknown-unknown/release/smart_split_contract.optimized.wasm \
   --source deployer \
   --network testnet)
 

@@ -45,7 +45,7 @@ export default function FreighterNotice({ show, onClose }) {
         bottom: '24px',
         right: '24px',
         zIndex: 9999,
-        maxWidth: '380px',
+        maxWidth: '360px',
         width: 'calc(100vw - 48px)',
         animation: exiting
           ? 'toastSlideOut 0.3s cubic-bezier(0.4,0,1,1) forwards'
@@ -64,163 +64,53 @@ export default function FreighterNotice({ show, onClose }) {
       `}</style>
 
       <div
+        className="rounded-2xl overflow-hidden border border-zinc-800 bg-[#0c0c0e]"
         style={{
-          background: 'rgba(10,15,30,0.92)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(251,191,36,0.3)',
-          borderRadius: '16px',
-          boxShadow:
-            '0 0 30px rgba(251,191,36,0.08), 0 20px 60px rgba(0,0,0,0.5)',
-          overflow: 'hidden',
+          boxShadow: '0 0 30px rgba(0,242,255,0.04), 0 20px 40px rgba(0,0,0,0.6)',
         }}
       >
         {/* Top accent bar */}
-        <div
-          style={{
-            height: '3px',
-            background:
-              'linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #f97316 100%)',
-          }}
-        />
+        <div className="h-0.5 bg-[#00f2ff]" />
 
-        <div style={{ padding: '16px 16px 16px 16px' }}>
+        <div className="p-4 space-y-3">
           {/* Header */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '12px',
-              marginBottom: '12px',
-            }}
-          >
-            <div
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                background: 'rgba(251,191,36,0.12)',
-                border: '1px solid rgba(251,191,36,0.25)',
-              }}
-            >
-              <AlertTriangle
-                style={{ width: '18px', height: '18px', color: '#fbbf24' }}
-              />
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-zinc-950 border border-zinc-900">
+              <AlertTriangle className="w-4 h-4 text-cyan-400" />
             </div>
 
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  color: '#fbbf24',
-                  margin: 0,
-                  marginBottom: '2px',
-                }}
-              >
-                Freighter Not Installed
+            <div className="flex-1 min-w-0">
+              <p className="font-display font-bold text-xs text-white uppercase tracking-wider">
+                Freighter Missing
               </p>
-              <p
-                style={{
-                  fontSize: '12px',
-                  color: 'rgba(255,255,255,0.45)',
-                  margin: 0,
-                  lineHeight: '1.5',
-                }}
-              >
-                A Freighter wallet extension is required to use Smart Split &amp; Pay.
+              <p className="text-[10px] text-zinc-500 mt-1 leading-relaxed">
+                Freighter wallet extension is required to use SplitPay.
               </p>
             </div>
 
             <button
               id="close-freighter-notice"
               onClick={handleClose}
-              style={{
-                width: '26px',
-                height: '26px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.08)',
-                background: 'rgba(255,255,255,0.04)',
-                color: 'rgba(255,255,255,0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
-                e.currentTarget.style.color = '#fff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                e.currentTarget.style.color = 'rgba(255,255,255,0.3)';
-              }}
+              className="w-6 h-6 rounded-md flex items-center justify-center text-zinc-600 hover:text-white border border-zinc-900 bg-zinc-950 hover:bg-zinc-900 transition-colors shrink-0"
               aria-label="Dismiss"
             >
-              <X style={{ width: '13px', height: '13px' }} />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Steps */}
-          <div
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.06)',
-              padding: '10px 12px',
-              marginBottom: '12px',
-            }}
-          >
+          <div className="rounded-xl border border-zinc-900 bg-zinc-950/40 p-3 space-y-2">
             {[
-              'Install Freighter from the link below',
-              'Create or import your Stellar account',
-              'Switch to Testnet in Freighter settings',
-              'Click "Connect Wallet" to get started',
+              'Install Freighter Extension from store',
+              'Create or import a Stellar account',
+              'Switch settings to Stellar Testnet',
+              'Connect wallet on the dashboard',
             ].map((step, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '10px',
-                  padding: '5px 0',
-                  borderBottom:
-                    i < 3 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                }}
-              >
-                <span
-                  style={{
-                    width: '18px',
-                    height: '18px',
-                    borderRadius: '50%',
-                    background: 'rgba(251,191,36,0.15)',
-                    border: '1px solid rgba(251,191,36,0.3)',
-                    color: '#fbbf24',
-                    fontSize: '10px',
-                    fontWeight: 700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    marginTop: '1px',
-                  }}
-                >
+              <div key={i} className="flex items-center gap-2.5">
+                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold text-black bg-[#00f2ff] shrink-0 select-none">
                   {i + 1}
                 </span>
-                <span
-                  style={{
-                    fontSize: '12px',
-                    color: 'rgba(255,255,255,0.55)',
-                    lineHeight: '1.5',
-                  }}
-                >
+                <span className="text-[10px] text-zinc-400">
                   {step}
                 </span>
               </div>
@@ -233,36 +123,11 @@ export default function FreighterNotice({ show, onClose }) {
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              width: '100%',
-              padding: '10px 16px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
-              color: '#fff',
-              fontSize: '13px',
-              fontWeight: 700,
-              textDecoration: 'none',
-              boxShadow: '0 0 20px rgba(251,191,36,0.2)',
-              transition: 'all 0.2s',
-              fontFamily: "'Inter', sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.02)';
-              e.currentTarget.style.boxShadow =
-                '0 0 30px rgba(251,191,36,0.35)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow =
-                '0 0 20px rgba(251,191,36,0.2)';
-            }}
+            className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-black bg-[#00f2ff] hover:bg-[#00d4ff] transition-all"
+            style={{ boxShadow: '0 0 10px rgba(0,242,255,0.1)' }}
           >
-            Install Freighter — {storeName}
-            <ExternalLink style={{ width: '13px', height: '13px' }} />
+            <span>Install Freighter</span>
+            <ExternalLink className="w-3 h-3" />
           </a>
         </div>
       </div>

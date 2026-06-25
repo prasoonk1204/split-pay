@@ -1,5 +1,5 @@
 #![no_std]
-use soroban_sdk::{contract, contractimpl, Address, Env};
+use soroban_sdk::{contract, contractimpl, Address, Env, IntoVal};
 
 #[contract]
 pub struct SmartSplitContract;
@@ -7,24 +7,28 @@ pub struct SmartSplitContract;
 #[contractimpl]
 impl SmartSplitContract {
     /// Executes an atomic split route.
-    /// This Rust contract acts as the backend mapping framework validating multi-node paths.
-    pub fn execute_split(env: Env, from: Address, to: Address, amount: i128) {
+    pub fn execute_split(env: Env, token: Address, from: Address, to: Address, amount: i128) {
         // Enforce cryptographic authorization from the sender's wallet
         from.require_auth();
 
-        // Bind directly to the native Stellar Asset Contract wrapper
-        // The contract address itself must be mapped to the SAC token space.
-        let token_client = soroban_sdk::token::Client::new(&env, &env.current_contract_address());
+        // Bind directly to the specified token contract (e.g. XLM SAC)
+        let token_client = soroban_sdk::token::Client::new(&env, &token);
         
-        // Execute the atomic transfer
+        // Execute the transfer
         token_client.transfer(&from, &to, &amount);
+
+        // Publish a Soroban event for the split
+        env.events().publish(
+            (soroban_sdk::symbol_short!("split"), from, to),
+            amount
+        );
     }
 
     /// Demonstrates inter-contract communication by routing a split through a secondary contract.
-    pub fn route_split(env: Env, proxy_contract: Address, from: Address, to: Address, amount: i128) {
+    pub fn route_split(env: Env, proxy_contract: Address, token: Address, from: Address, to: Address, amount: i128) {
         from.require_auth();
         // Invoke the secondary proxy contract using inter-contract communication
-        env.invoke_contract::<()>(&proxy_contract, &soroban_sdk::Symbol::new(&env, "proxy_transfer"), soroban_sdk::vec![&env, from.into_val(&env), to.into_val(&env), amount.into_val(&env)]);
+        env.invoke_contract::<()>(&proxy_contract, &soroban_sdk::Symbol::new(&env, "proxy_transfer"), soroban_sdk::vec![&env, token.into_val(&env), from.into_val(&env), to.into_val(&env), amount.into_val(&env)]);
     }
 }
 

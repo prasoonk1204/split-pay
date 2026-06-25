@@ -8,7 +8,7 @@ build:
 
 optimize:
 	@echo "Optimizing WASM..."
-	soroban contract optimize --wasm contracts/split_contract/target/wasm32-unknown-unknown/release/split_contract.wasm
+	stellar contract optimize --wasm contracts/split_contract/target/wasm32-unknown-unknown/release/smart_split_contract.wasm
 
 test:
 	@echo "Running contract tests..."

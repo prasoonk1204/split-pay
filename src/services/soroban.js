@@ -141,14 +141,28 @@ export const sacTransfer = async (senderPublicKey, recipientPublicKeys, amountXl
   const amountStroops = BigInt(Math.round(parseFloat(amountXlmSplit) * 1e7));
 
   let lastHash = null;
+  const isSAC = CONTRACT_ID === 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC';
 
   for (const recipient of recipientPublicKeys) {
-    const args = [
-      nativeToScVal(Address.fromString(senderPublicKey), { type: 'address' }),
-      nativeToScVal(Address.fromString(recipient), { type: 'address' }),
-      nativeToScVal(amountStroops, { type: 'i128' }),
-    ];
-    const res = await callContract(senderPublicKey, 'transfer', args);
+    let fnName, args;
+    if (isSAC) {
+      fnName = 'transfer';
+      args = [
+        nativeToScVal(Address.fromString(senderPublicKey), { type: 'address' }),
+        nativeToScVal(Address.fromString(recipient), { type: 'address' }),
+        nativeToScVal(amountStroops, { type: 'i128' }),
+      ];
+    } else {
+      fnName = 'execute_split';
+      args = [
+        nativeToScVal(Address.fromString('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC'), { type: 'address' }),
+        nativeToScVal(Address.fromString(senderPublicKey), { type: 'address' }),
+        nativeToScVal(Address.fromString(recipient), { type: 'address' }),
+        nativeToScVal(amountStroops, { type: 'i128' }),
+      ];
+    }
+
+    const res = await callContract(senderPublicKey, fnName, args);
     lastHash = res.hash;
   }
 

@@ -1,7 +1,3 @@
-/**
- * WalletModal.jsx — Integration Phase multi-wallet picker overlay
- * Shows all supported wallets, marks installed ones, lets user pick.
- */
 import { useEffect, useState } from 'react';
 import { getSupportedWallets, StellarWalletsKit, initKit } from '../services/walletKit';
 
@@ -18,8 +14,6 @@ export default function WalletModal({ onConnected, onClose }) {
     try {
       initKit();
       StellarWalletsKit.setWallet(wallet.id);
-      // 🔥 CRITICAL FIX: fetchAddress() initiates the connection prompt in the extension.
-      // getAddress() only reads from the Kit's local memory, which is empty right now.
       const { address } = await StellarWalletsKit.fetchAddress();
       onConnected(address, null, wallet.id);
     } catch (err) {
@@ -33,32 +27,31 @@ export default function WalletModal({ onConnected, onClose }) {
   return (
     <div
       className="fixed inset-0 flex items-center justify-center px-4"
-      style={{ zIndex: 9999, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)' }}
+      style={{ zIndex: 9999, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="w-full max-w-sm rounded-3xl overflow-hidden animate-scale-in"
+        className="w-full max-w-sm rounded-2xl overflow-hidden animate-scale-in"
         style={{
-          background: 'linear-gradient(160deg, rgba(13,18,40,0.98) 0%, rgba(8,10,22,0.98) 100%)',
-          border: '1px solid rgba(0,212,255,0.2)',
-          boxShadow: '0 0 80px rgba(0,212,255,0.1), 0 32px 64px rgba(0,0,0,0.7)',
+          background: '#0c0c0e',
+          border: '1px solid rgba(0, 242, 255, 0.2)',
+          boxShadow: '0 0 40px rgba(0,242,255,0.05), 0 20px 50px rgba(0,0,0,0.8)',
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-zinc-900">
           <div>
-            <h2 className="font-display font-bold text-base" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="font-display font-bold text-xs text-white uppercase tracking-wider">
               Connect Wallet
             </h2>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-              Select your Stellar wallet to continue
+            <p className="text-[10px] text-zinc-500 mt-0.5">
+              Select your Stellar extension to login
             </p>
           </div>
           <button
             id="wallet-modal-close"
             onClick={onClose}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-sm transition-all hover:scale-110"
-            style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.08)' }}
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-all hover:bg-zinc-800 text-zinc-500 hover:text-white border border-zinc-800"
           >
             ✕
           </button>
@@ -67,9 +60,9 @@ export default function WalletModal({ onConnected, onClose }) {
         {/* Wallet list */}
         <div className="p-4 space-y-2 max-h-72 overflow-y-auto">
           {wallets.length === 0 ? (
-            <div className="py-8 text-center" style={{ color: 'var(--text-muted)' }}>
-              <div className="spin-slow inline-block w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full mb-3" />
-              <p className="text-xs">Discovering wallets…</p>
+            <div className="py-8 text-center text-zinc-500">
+              <div className="spin-slow inline-block w-4 h-4 border border-cyan-400 border-t-transparent rounded-full mb-2" />
+              <p className="text-[10px]">Discovering wallets…</p>
             </div>
           ) : (
             wallets.map((w) => (
@@ -78,58 +71,57 @@ export default function WalletModal({ onConnected, onClose }) {
                 key={w.id}
                 onClick={() => handlePick(w)}
                 disabled={!!busy}
-                className="w-full flex items-center gap-3 p-3 rounded-2xl text-left transition-all duration-200 group disabled:opacity-60"
+                className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 group disabled:opacity-60"
                 style={{
-                  background: w.isAvailable ? 'rgba(0,212,255,0.05)' : 'rgba(255,255,255,0.02)',
-                  border: w.isAvailable ? '1px solid rgba(0,212,255,0.15)' : '1px solid rgba(255,255,255,0.05)',
+                  background: w.isAvailable ? 'rgba(0,242,255,0.02)' : 'transparent',
+                  border: w.isAvailable ? '1px solid rgba(0,242,255,0.1)' : '1px solid #1a1a24',
                 }}
-                onMouseEnter={(e) => { if (!busy) e.currentTarget.style.background = 'rgba(0,212,255,0.1)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = w.isAvailable ? 'rgba(0,212,255,0.05)' : 'rgba(255,255,255,0.02)'; }}
+                onMouseEnter={(e) => { if (!busy) { e.currentTarget.style.background = 'rgba(0,242,255,0.06)'; e.currentTarget.style.borderColor = '#00f2ff'; } }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = w.isAvailable ? 'rgba(0,242,255,0.02)' : 'transparent'; e.currentTarget.style.borderColor = w.isAvailable ? 'rgba(0,242,255,0.1)' : '#1a1a24'; }}
               >
                 {/* Icon */}
-                <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  {w.icon
-                    ? <img src={w.icon} alt={w.name} className="w-6 h-6 object-contain" />
-                    : <span className="text-lg">👛</span>
-                  }
+                <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center shrink-0 bg-zinc-950 border border-zinc-800">
+                  {w.icon ? (
+                    <img src={w.icon} alt={w.name} className="w-5 h-5 object-contain" />
+                  ) : (
+                    <span className="text-sm">👛</span>
+                  )}
                 </div>
 
                 {/* Name & status */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{w.name}</span>
+                    <span className="text-xs font-bold text-white">{w.name}</span>
                     {w.isAvailable && (
-                      <span className="px-1.5 py-0.5 rounded text-xs font-medium"
-                        style={{ background: 'rgba(16,185,129,0.12)', color: '#10b981', border: '1px solid rgba(16,185,129,0.2)' }}>
-                        ✓ Installed
+                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-emerald-950/20 text-emerald-400 border border-emerald-900/30">
+                        Installed
                       </span>
                     )}
                     {!w.isAvailable && (
                       <a href={w.url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}
-                        className="px-1.5 py-0.5 rounded text-xs font-medium hover:opacity-80 transition-opacity"
-                        style={{ background: 'rgba(124,58,237,0.12)', color: '#a78bfa', border: '1px solid rgba(124,58,237,0.2)' }}>
+                        className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 transition-opacity">
                         Install
                       </a>
                     )}
                   </div>
-                  <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>{w.url}</p>
+                  <p className="text-[9px] text-zinc-600 truncate mt-0.5">{w.url}</p>
                 </div>
 
                 {/* Arrow or spinner */}
-                {busy === w.id
-                  ? <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full spin-slow shrink-0" />
-                  : <span className="text-xs shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: 'var(--text-muted)' }}>›</span>
-                }
+                {busy === w.id ? (
+                  <div className="w-3.5 h-3.5 border-2 border-cyan-400 border-t-transparent rounded-full spin-slow shrink-0" />
+                ) : (
+                  <span className="text-xs shrink-0 transition-transform group-hover:translate-x-0.5 text-zinc-600">›</span>
+                )}
               </button>
             ))
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 flex items-center gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            🔒 Your keys never leave your wallet. SmartSplit is non-custodial.
+        <div className="px-6 py-4 flex items-center gap-2 border-t border-zinc-900 bg-zinc-950/40">
+          <span className="text-[9px] text-zinc-600 font-medium">
+            🔒 Your keys never leave your device. SplitPay is non-custodial.
           </span>
         </div>
       </div>
