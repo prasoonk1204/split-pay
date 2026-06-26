@@ -36,14 +36,14 @@ Explicit handling and classification for critical edge cases:
 
 ## 📌 Important Links & Verifications
 
-- **Live Demo Link:** [Insert Live URL Here]
+- **Live Demo Link:** [Link]
 - **Demo Video:** [demo-video.mp4](./demo-video.mp4)
-- **Deployed Contract Address:** `[Insert Contract ID Here]`
-- **Contract Interaction Hash:** `[Insert Tx Hash Here]`
+- **Deployed Contract Address:** `CB5O5ZTTE4OS7R3KLQVUOV7MVN5SA5DJSMHEUZYJ6YCNE3NLPBPAEJQH`
+- **Contract Interaction Hash:** `f1ca8ee3a2854935e28586d27ed0eb86b98077c0c1f39e59dfb163a0e5f43c6d`
 
 ### Screenshots
 - **Wallet Options:** ![Wallet Options](screenshots/wallet-options.png)
-- **Wallet Connected & Balance:** ![Wallet Connected](screenshots/wallet-connected.png)
+- **Wallet Connected & Balance:** ![Wallet Connected](screenshots/dashboard.png)
 - **Mobile Responsive UI:** ![Mobile UI](screenshots/mobile-ui.png)
 - **Successful Testnet Transaction:** ![Testnet Transaction](screenshots/testnet-transaction.png)
 - **Automated Test Output (3+ Passing):** ![Test Output](screenshots/test-output.png)

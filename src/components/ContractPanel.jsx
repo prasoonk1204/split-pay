@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { sacTransfer, classifyError, CONTRACT_ID } from '../services/soroban';
 import { Lock, HelpCircle } from 'lucide-react';
 
 const EXPLORER_BASE = 'https://stellar.expert/explorer/testnet/tx/';
 const CONTRACT_EXPLORER = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`;
 
-export default function ContractPanel({ publicKey, onResult, onConnectWallet }) {
+export default function ContractPanel({ 
+  publicKey, 
+  onResult, 
+  onConnectWallet,
+  prepopulatedPayees,
+  prepopulatedSplitCount,
+  onClearPrepopulation
+}) {
   const [amount, setAmount] = useState('');
   const [splitCount, setSplitCount] = useState(2);
   const [recipients, setRecipients] = useState(['']);
@@ -14,6 +21,15 @@ export default function ContractPanel({ publicKey, onResult, onConnectWallet }) 
   const [errorInfo, setErrorInfo] = useState(null);
 
   const isConnected = !!publicKey;
+
+  // React to template prepopulation loaded from Groups Tab
+  useEffect(() => {
+    if (prepopulatedPayees) {
+      setSplitCount(prepopulatedSplitCount);
+      setRecipients(prepopulatedPayees);
+      if (onClearPrepopulation) onClearPrepopulation();
+    }
+  }, [prepopulatedPayees, prepopulatedSplitCount, onClearPrepopulation]);
 
   const handleTransfer = async (e) => {
     e.preventDefault();

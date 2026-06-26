@@ -117,7 +117,15 @@ export default function ActivityFeed() {
               </div>
               <p className="text-[10px] mt-1 font-mono text-zinc-500 truncate">
                 Ledger #{ev.ledger}
-                {ev.value !== null && ev.value !== undefined && ` · ${String(ev.value)}`}
+                {ev.value !== null && ev.value !== undefined && (() => {
+                  try {
+                    const stroops = BigInt(ev.value);
+                    const xlm = Number(stroops) / 1e7;
+                    return ` · ${xlm.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 })} XLM`;
+                  } catch {
+                    return ` · ${ev.value}`;
+                  }
+                })()}
               </p>
             </div>
           </div>
