@@ -33,9 +33,12 @@ export default function ActivityFeed() {
   }, []);
 
   useEffect(() => {
-    load();
+    const t = setTimeout(load, 0);
     const timer = setInterval(load, 15000); // 15s interval is great for testnet polling
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(t);
+      clearInterval(timer);
+    };
   }, [load]);
 
   return (

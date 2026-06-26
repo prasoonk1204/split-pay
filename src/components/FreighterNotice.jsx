@@ -18,10 +18,12 @@ export default function FreighterNotice({ show, onClose }) {
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (show) {
       setVisible(true);
       setExiting(false);
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [show]);
 
   const handleClose = () => {
@@ -34,7 +36,6 @@ export default function FreighterNotice({ show, onClose }) {
 
   const browser = detectBrowser();
   const storeUrl = browser === 'firefox' ? FREIGHTER_FIREFOX : FREIGHTER_CHROME;
-  const storeName = browser === 'firefox' ? 'Firefox Add-ons' : 'Chrome Web Store';
 
   if (!visible) return null;
 

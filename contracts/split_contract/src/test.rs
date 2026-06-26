@@ -1,7 +1,7 @@
 #![cfg(test)]
 
-use soroban_sdk::{testutils::Address as _, Address, Env};
 use crate::{SmartSplitContract, SmartSplitContractClient};
+use soroban_sdk::{testutils::Address as _, Address, Env};
 
 #[test]
 fn test_execute_split() {

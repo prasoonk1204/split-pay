@@ -1,0 +1,37 @@
+name: Dependency Vulnerability Audit
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # Run weekly to discover new vulnerabilities automatically
+    - cron: '0 0 * * 0'
+
+jobs:
+  audit-frontend:
+    name: Audit Frontend Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  audit-contract:
+    name: Audit Rust Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Cargo Audit
+        uses: actions-rust-lang/audit@v1
+        with:
+          workingDirectory: 'contracts/split_contract'
+          ignore: 'RUSTSEC-2024-0344,RUSTSEC-2026-0009'

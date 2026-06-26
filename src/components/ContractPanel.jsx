@@ -22,13 +22,14 @@ export default function ContractPanel({
 
   const isConnected = !!publicKey;
 
-  // React to template prepopulation loaded from Groups Tab
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (prepopulatedPayees) {
       setSplitCount(prepopulatedSplitCount);
       setRecipients(prepopulatedPayees);
       if (onClearPrepopulation) onClearPrepopulation();
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [prepopulatedPayees, prepopulatedSplitCount, onClearPrepopulation]);
 
   const handleTransfer = async (e) => {

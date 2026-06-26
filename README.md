@@ -38,6 +38,7 @@ Explicit handling and classification for critical edge cases:
 
 - **Live Demo Link:** [Link]
 - **Demo Video:** [demo-video.mp4](./demo-video.mp4)
+
 - **Deployed Contract Address:** `CB5O5ZTTE4OS7R3KLQVUOV7MVN5SA5DJSMHEUZYJ6YCNE3NLPBPAEJQH`
 - **Contract Interaction Hash:** `f1ca8ee3a2854935e28586d27ed0eb86b98077c0c1f39e59dfb163a0e5f43c6d`
 
@@ -48,6 +49,22 @@ Explicit handling and classification for critical edge cases:
 - **Successful Testnet Transaction:** ![Testnet Transaction](screenshots/testnet-transaction.png)
 - **Automated Test Output (3+ Passing):** ![Test Output](screenshots/test-output.png)
 - **CI/CD Pipeline Running:** ![CI/CD Status](screenshots/ci-cd.png)
+
+---
+
+## 🤖 Automated CI/CD Pipelines
+
+This repository is equipped with fully integrated **GitHub Actions** workflows to automate build validation, testing, code quality checks, and dependency security checks:
+
+1. **Continuous Integration ([ci.yml](file:///.github/workflows/ci.yml)):**
+   * Triggered on every push and pull request to the `main` branch.
+   * Compiles the Rust smart contract (`make build`), runs contract tests (`make test`), runs the frontend Vitest suite (`npm run test`), and builds the production site.
+2. **Code Quality & Linting ([lint.yml](file:///.github/workflows/lint.yml)):**
+   * Triggered on every push and pull request to `main`.
+   * Enforces frontend code standards (`npm run lint`), checks Rust formatting (`cargo fmt`), and runs cargo clippy checks.
+3. **Dependency Security Audit ([audit.yml](file:///.github/workflows/audit.yml)):**
+   * Triggered on pushes, PRs, and runs automatically every Sunday.
+   * Scans frontend packages for high-severity vulnerabilities (`npm audit`) and audits Rust dependencies (`cargo audit`) using the official RustSec action.
 
 ---
 

@@ -1,0 +1,48 @@
+name: Code Quality & Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-frontend:
+    name: Lint Frontend (JS/React)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run ESLint Check
+        run: npm run lint
+
+  lint-contract:
+    name: Lint Soroban Contract (Rust)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          targets: wasm32-unknown-unknown
+
+      - name: Check Formatting
+        run: cargo fmt --all --manifest-path contracts/split_contract/Cargo.toml -- --check
+
+      - name: Run Clippy Diagnostics
+        run: cargo clippy --manifest-path contracts/split_contract/Cargo.toml --lib -- -D warnings -A unexpected_cfgs

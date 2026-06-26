@@ -22,7 +22,9 @@ import { StellarWalletsKit, initKit } from './services/walletKit';
 
 function App() {
   // ── Shared state ─────────────────────────────────────────────────────────────
-  const [publicKey, setPublicKey] = useState(null);
+  const [publicKey, setPublicKey] = useState(() => {
+    return localStorage.getItem('splitpay_address') || null;
+  });
   const [balance, setBalance] = useState('0.00');
 
   // ── Active tab navigation state ───────────────────────────────────────────────
@@ -41,18 +43,6 @@ function App() {
   // ── Loading state ────────────────────────────────────────────────────────────
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
 
-  // Auto-reconnect flow
-  useEffect(() => {
-    const savedAddress = localStorage.getItem('splitpay_address');
-    const savedType = localStorage.getItem('splitpay_walletType');
-    if (savedAddress && savedType) {
-      initKit();
-      StellarWalletsKit.setWallet(savedType);
-      setPublicKey(savedAddress);
-      updateBalance(savedAddress);
-    }
-  }, []);
-
   const updateBalance = async (pk) => {
     setIsFetchingBalance(true);
     try {
@@ -64,6 +54,19 @@ function App() {
       setIsFetchingBalance(false);
     }
   };
+
+  // Auto-reconnect flow
+  useEffect(() => {
+    const savedAddress = localStorage.getItem('splitpay_address');
+    const savedType = localStorage.getItem('splitpay_walletType');
+    if (savedAddress && savedType) {
+      initKit();
+      StellarWalletsKit.setWallet(savedType);
+      setTimeout(() => {
+        updateBalance(savedAddress);
+      }, 0);
+    }
+  }, []);
 
   const handleConnect = () => {
     setShowFreighterNotice(false);

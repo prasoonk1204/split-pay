@@ -13,31 +13,31 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: 🛎️ Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🛡️ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
-      - name: 📦 Install Dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: 🦀 Setup Rust
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
 
-      - name: 🧪 Run Soroban Contract Tests
+      - name: Run Soroban Contract Tests
         run: make test
 
-      - name: ⚙️ Build Soroban Contract
+      - name: Build Soroban Contract
         run: make build
 
-      - name: 🧪 Run Vitest Test Suite
+      - name: Run Vitest Test Suite
         run: npm run test
 
-      - name: 🏗️ Build Production Bundle
+      - name: Build Production Bundle
         run: npm run build

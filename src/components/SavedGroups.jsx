@@ -1,18 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Users, Plus, Trash2, ArrowRight } from 'lucide-react';
 
 export default function SavedGroups({ onLoadGroup }) {
-  const [groups, setGroups] = useState([]);
-  const [groupName, setGroupName] = useState('');
-  const [addresses, setAddresses] = useState(['']);
-
-  useEffect(() => {
+  const [groups, setGroups] = useState(() => {
     const cached = localStorage.getItem('splitpay_contact_groups');
     if (cached) {
       try {
-        setGroups(JSON.parse(cached));
+        return JSON.parse(cached);
       } catch {
-        setGroups([]);
+        return [];
       }
     } else {
       // Pre-populate with a demo group for a fuller UI experience
@@ -26,10 +22,12 @@ export default function SavedGroups({ onLoadGroup }) {
           ]
         }
       ];
-      setGroups(demoGroups);
       localStorage.setItem('splitpay_contact_groups', JSON.stringify(demoGroups));
+      return demoGroups;
     }
-  }, []);
+  });
+  const [groupName, setGroupName] = useState('');
+  const [addresses, setAddresses] = useState(['']);
 
   const saveGroups = (newGroups) => {
     setGroups(newGroups);
