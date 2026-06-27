@@ -34,9 +34,9 @@ Explicit handling and classification for critical edge cases:
 
 ---
 
-## 📌 Important Links & Verifications
+## Important Links & Screenshots
 
-- **Live Demo Link:** [Link]
+- **Live Demo Link:** [split-pay-eta.vercel.app](https://split-pay-eta.vercel.app/)
 - **Demo Video:** [demo-video.mp4](./demo-video.mp4)
 
 - **Deployed Contract Address:** `CB5O5ZTTE4OS7R3KLQVUOV7MVN5SA5DJSMHEUZYJ6YCNE3NLPBPAEJQH`
@@ -52,7 +52,7 @@ Explicit handling and classification for critical edge cases:
 
 ---
 
-## 🤖 Automated CI/CD Pipelines
+## Automated CI/CD Pipelines
 
 This repository is equipped with fully integrated **GitHub Actions** workflows to automate build validation, testing, code quality checks, and dependency security checks:
 
