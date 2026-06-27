@@ -139,9 +139,12 @@ export const callContract = async (publicKey, fnName, args = []) => {
  */
 export const sacTransfer = async (senderPublicKey, recipientPublicKeys, amountXlmSplit) => {
   const amountStroops = BigInt(Math.round(parseFloat(amountXlmSplit) * 1e7));
+  const isSAC = CONTRACT_ID === 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC';
+
+  const account = await sorobanServer.getAccount(senderPublicKey);
+  const contract = new Contract(CONTRACT_ID);
 
   let lastHash = null;
-  const isSAC = CONTRACT_ID === 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC';
 
   for (const recipient of recipientPublicKeys) {
     let fnName, args;
@@ -162,8 +165,47 @@ export const sacTransfer = async (senderPublicKey, recipientPublicKeys, amountXl
       ];
     }
 
-    const res = await callContract(senderPublicKey, fnName, args);
-    lastHash = res.hash;
+    // Reuse the same Account object to automatically increment sequence number in-memory
+    const tx = new TransactionBuilder(account, {
+      fee: '1000000',
+      networkPassphrase: Networks.TESTNET,
+    })
+      .addOperation(contract.call(fnName, ...args))
+      .setTimeout(30)
+      .build();
+
+    // Simulate
+    const simResult = await sorobanServer.simulateTransaction(tx);
+    if (rpc.Api.isSimulationError(simResult)) {
+      throw new Error(`Simulation failed: ${simResult.error}`);
+    }
+
+    const preparedTx = rpc.assembleTransaction(tx, simResult).build();
+    const signedXdr = await signWithKit(preparedTx.toXDR());
+    const signedTx = TransactionBuilder.fromXDR(signedXdr, Networks.TESTNET);
+
+    const sendResult = await sorobanServer.sendTransaction(signedTx);
+    if (sendResult.status === 'ERROR') {
+      throw new Error(`Submission error: ${JSON.stringify(sendResult.errorResultXdr)}`);
+    }
+
+    // Poll for confirmation (up to 15 attempts × 2s = 30s)
+    let getResult;
+    let attempts = 0;
+    do {
+      await new Promise((r) => setTimeout(r, 2000));
+      getResult = await sorobanServer.getTransaction(sendResult.hash);
+      attempts++;
+    } while (
+      getResult.status === rpc.Api.GetTransactionStatus.NOT_FOUND &&
+      attempts < 15
+    );
+
+    if (getResult.status !== rpc.Api.GetTransactionStatus.SUCCESS) {
+      throw new Error(`Transaction failed with status: ${getResult.status}`);
+    }
+
+    lastHash = sendResult.hash;
   }
 
   return { hash: lastHash };

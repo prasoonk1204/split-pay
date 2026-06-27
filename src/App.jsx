@@ -217,7 +217,7 @@ function App() {
             {activeTab === 'guide' && 'Getting Started Guide'}
           </h1>
           <p className="text-xs max-w-sm mx-auto leading-relaxed text-zinc-400">
-            {activeTab === 'dashboard' && 'Split bills instantly, send XLM to anyone, and record payments on-chain via Soroban.'}
+            {activeTab === 'dashboard' && 'Distribute split payments to your friends and record payout transactions on-chain via Soroban.'}
             {activeTab === 'groups' && 'Manage reusable splits templates for your friends, roommates, or trip partners.'}
             {activeTab === 'labs' && 'Fund any testnet account with Friendbot and inspect deployed smart contract parameters.'}
             {activeTab === 'guide' && 'An interactive walk-through on setting up Freighter, configuring testnet, and splitting bills.'}
@@ -254,7 +254,7 @@ function App() {
                     </li>
                     <li className="flex gap-2.5">
                       <span className="text-cyan-400 select-none">02</span>
-                      <span>Enter the total amount and payees to execute an atomic split via smart contract.</span>
+                      <span>Enter the total amount to distribute, and the payee addresses to execute an atomic payout split.</span>
                     </li>
                     <li className="flex gap-2.5">
                       <span className="text-cyan-400 select-none">03</span>

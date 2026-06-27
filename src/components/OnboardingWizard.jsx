@@ -35,8 +35,8 @@ export default function OnboardingWizard({ publicKey, onTriggerConnect }) {
     },
     {
       title: "Perform your first split!",
-      description: "Now you are ready to execute your first atomic split on the Soroban smart contract.",
-      details: "Go back to the Dashboard tab, enter the total amount to split, specify how many people are splitting, enter the recipient public keys, and click 'Execute Split' to trigger the sign prompt.",
+      description: "Send split payments directly to your friends' wallets atomically.",
+      details: "Go back to the Dashboard tab, enter the total amount to split, specify how many friends you are splitting with, enter their public keys, and click 'Execute Split' to trigger the sign prompt. The contract will automatically calculate each friend's share and send it to them directly from your active wallet.",
       isComplete: false,
       action: null
     }
